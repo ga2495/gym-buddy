@@ -28,32 +28,64 @@ function Navbar() {
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
 
-            <div className="container">
+    <div className="container">
 
-                <Link className="navbar-brand" to="/dashboard">
-                    🏋️ Gym Buddy
-                </Link>
+        <Link className="navbar-brand" to="/dashboard">
+            🏋️ Gym Buddy
+        </Link>
 
-                <div className="ms-auto d-flex align-items-center">
+        <div className="navbar-nav">
 
-                    {user && (
-                        <span className="text-white me-3">
-                            👋 {user.full_name}
-                        </span>
-                    )}
+            <Link className="nav-link" to="/dashboard">
+                Dashboard
+            </Link>
 
-                    <button
-                        className="btn btn-danger"
-                        onClick={logout}
-                    >
-                        Logout
-                    </button>
+            <Link className="nav-link" to="/profile">
+                Profile
+            </Link>
 
-                </div>
+            <Link className="nav-link" to="/buddies">
+                Buddies
+            </Link>
 
-            </div>
+            <Link className="nav-link" to="/friends">
+                Friends
+            </Link>
 
-        </nav>
+            <Link className="nav-link" to="/chat">
+                Chat
+            </Link>
+
+            <Link className="nav-link" to="/workout">
+                Workout
+            </Link>
+
+        </div>
+
+        <div className="ms-auto d-flex align-items-center">
+
+            {user && (
+
+                <span className="text-white me-3">
+
+                    👋 {user.full_name}
+
+                </span>
+
+            )}
+
+            <button
+                className="btn btn-danger"
+                onClick={logout}
+            >
+                Logout
+            </button>
+
+        </div>
+
+    </div>
+
+</nav>
     );
 }
 

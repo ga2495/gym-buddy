@@ -10,53 +10,86 @@ import Chat from "./pages/Chat";
 import Workout from "./pages/Workout";
 
 import ProtectedRoute from "./components/ProtectedRoute";
+import Layout from "./components/Layout";
 
 function App() {
+  return (
+    <Routes>
 
-    return (
+      <Route path="/" element={<Navigate to="/login" />} />
 
-        <Routes>
+      <Route path="/login" element={<Login />} />
 
-            <Route path="/" element={<Navigate to="/login" />} />
+      <Route path="/register" element={<Register />} />
 
-            <Route path="/login" element={<Login />} />
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <Dashboard />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
 
-            <Route path="/register" element={<Register />} />
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <Profile />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
 
-            <Route
-                path="/dashboard"
-                element={<ProtectedRoute><Dashboard /></ProtectedRoute>}
-            />
+      <Route
+        path="/buddies"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <Buddies />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
 
-            <Route
-                path="/profile"
-                element={<ProtectedRoute><Profile /></ProtectedRoute>}
-            />
+      <Route
+        path="/friends"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <Friends />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
 
-            <Route
-                path="/buddies"
-                element={<ProtectedRoute><Buddies /></ProtectedRoute>}
-            />
+      <Route
+        path="/chat"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <Chat />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
 
-            <Route
-                path="/friends"
-                element={<ProtectedRoute><Friends /></ProtectedRoute>}
-            />
+      <Route
+        path="/workout"
+        element={
+          <ProtectedRoute>
+            <Layout>
+              <Workout />
+            </Layout>
+          </ProtectedRoute>
+        }
+      />
 
-            <Route
-                path="/chat"
-                element={<ProtectedRoute><Chat /></ProtectedRoute>}
-            />
-
-            <Route
-                path="/workout"
-                element={<ProtectedRoute><Workout /></ProtectedRoute>}
-            />
-
-        </Routes>
-
-    );
-
+    </Routes>
+  );
 }
 
 export default App;
