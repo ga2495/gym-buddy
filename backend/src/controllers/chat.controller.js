@@ -9,14 +9,16 @@ const sendMessage = async (req, res) => {
     try {
 
         const senderId = req.userId;
-        const receiverId = Number(req.params.id);
-        const { message } = req.body;
 
-        if (!message || message.trim() === "") {
+        const { receiver_id, message } = req.body;
+
+        if (!receiver_id || !message) {
+
             return res.status(400).json({
                 success: false,
-                message: "Message cannot be empty"
+                message: "Receiver and message are required."
             });
+
         }
 
         await pool.query(
@@ -29,11 +31,7 @@ const sendMessage = async (req, res) => {
             )
             VALUES($1,$2,$3)
             `,
-            [
-                senderId,
-                receiverId,
-                message
-            ]
+            [senderId, receiver_id, message]
         );
 
         res.json({
@@ -55,47 +53,41 @@ const sendMessage = async (req, res) => {
 };
 
 // =======================================
-// GET CONVERSATION
+// GET CHAT MESSAGES
 // =======================================
 
-const getConversation = async (req, res) => {
+const getMessages = async (req, res) => {
 
     try {
 
         const senderId = req.userId;
-        const receiverId = Number(req.params.id);
+
+        const receiverId = req.params.id;
 
         const result = await pool.query(
             `
             SELECT
+                id,
                 sender_id,
                 receiver_id,
                 message,
                 created_at
             FROM messages
-
             WHERE
-
             (
                 sender_id=$1
                 AND
                 receiver_id=$2
             )
-
             OR
-
             (
                 sender_id=$2
                 AND
                 receiver_id=$1
             )
-
             ORDER BY created_at ASC
             `,
-            [
-                senderId,
-                receiverId
-            ]
+            [senderId, receiverId]
         );
 
         res.json({
@@ -118,5 +110,5 @@ const getConversation = async (req, res) => {
 
 module.exports = {
     sendMessage,
-    getConversation
+    getMessages
 };

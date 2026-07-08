@@ -5,29 +5,13 @@ const protect = require("../middleware/auth");
 
 const {
     sendMessage,
-    getConversation
+    getMessages
 } = require("../controllers/chat.controller");
 
-// =======================================
-// SEND MESSAGE
-// POST /api/chat/send/:id
-// =======================================
+// Send Message
+router.post("/", protect, sendMessage);
 
-router.post(
-    "/send/:id",
-    protect,
-    sendMessage
-);
-
-// =======================================
-// GET CONVERSATION
-// GET /api/chat/:id
-// =======================================
-
-router.get(
-    "/:id",
-    protect,
-    getConversation
-);
+// Get Messages
+router.get("/:id", protect, getMessages);
 
 module.exports = router;
