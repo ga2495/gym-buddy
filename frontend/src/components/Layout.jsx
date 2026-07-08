@@ -2,25 +2,17 @@ import Navbar from "./Navbar";
 import Footer from "./Footer";
 
 function Layout({ children }) {
-
     return (
-
         <>
-
             <Navbar />
 
-            <div className="container mt-4">
-
+            <main className="container mt-4">
                 {children}
-
-            </div>
+            </main>
 
             <Footer />
-
         </>
-
     );
-
 }
 
 export default Layout;
