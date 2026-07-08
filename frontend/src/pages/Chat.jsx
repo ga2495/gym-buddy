@@ -6,43 +6,83 @@ function Chat() {
 
     const [friends, setFriends] = useState([]);
     const [selectedFriend, setSelectedFriend] = useState(null);
+
     const [messages, setMessages] = useState([]);
-    const [message, setMessage] = useState("");
+
+    const [text, setText] = useState("");
 
     useEffect(() => {
+
         loadFriends();
+
     }, []);
 
-    const loadFriends = async () => {
-        try {
-            const res = await api.get("/friends");
-            setFriends(res.data.friends);
-        } catch (err) {
-            console.log(err);
+    useEffect(() => {
+
+        if (selectedFriend) {
+
+            loadMessages(selectedFriend.id);
+
         }
+
+    }, [selectedFriend]);
+
+    const loadFriends = async () => {
+
+        try {
+
+            const res = await api.get("/friends");
+
+            setFriends(res.data.friends);
+
+        } catch (err) {
+
+            console.log(err);
+
+        }
+
     };
 
-    const loadConversation = async (friendId) => {
+    const loadMessages = async (friendId) => {
+
         try {
+
             const res = await api.get(`/chat/${friendId}`);
+
             setMessages(res.data.messages);
-            setSelectedFriend(friendId);
+
         } catch (err) {
+
             console.log(err);
+
         }
+
     };
 
     const sendMessage = async () => {
 
-        if (!message.trim()) return;
+        if (!text.trim()) return;
 
-        await api.post(`/chat/send/${selectedFriend}`, {
-            message
-        });
+        try {
 
-        setMessage("");
+            await api.post("/chat", {
 
-        loadConversation(selectedFriend);
+                receiver_id: selectedFriend.id,
+
+                message: text
+
+            });
+
+            setText("");
+
+            loadMessages(selectedFriend.id);
+
+        } catch (err) {
+
+            alert("Unable to send message");
+
+        }
+
     };
 
     return (
@@ -51,54 +91,75 @@ function Chat() {
 
             <div className="row">
 
-                {/* Friends List */}
-
                 <div className="col-md-4">
 
-                    <div className="card">
+                    <div className="card shadow">
 
-                        <div className="card-header">
+                        <div className="card-header bg-dark text-white">
 
                             Friends
 
                         </div>
 
-                        <ul className="list-group list-group-flush">
+                        <div className="list-group list-group-flush">
 
                             {
 
-                                friends.map(friend => (
+                                friends.length === 0 ?
 
-                                    <li
+                                <div className="p-3">
+
+                                    No Friends
+
+                                </div>
+
+                                :
+
+                                friends.map((friend) => (
+
+                                    <button
+
                                         key={friend.id}
-                                        className="list-group-item list-group-item-action"
-                                        style={{ cursor: "pointer" }}
-                                        onClick={() => loadConversation(friend.id)}
+
+                                        className={`list-group-item list-group-item-action ${selectedFriend?.id === friend.id ? "active" : ""}`}
+
+                                        onClick={() => setSelectedFriend(friend)}
+
                                     >
 
-                                        <b>{friend.full_name}</b>
+                                        {friend.full_name}
 
-                                        <br />
-
-                                        <small>{friend.city}</small>
-
-                                    </li>
+                                    </button>
 
                                 ))
 
                             }
 
-                        </ul>
+                        </div>
 
                     </div>
 
                 </div>
 
-                {/* Chat */}
-
                 <div className="col-md-8">
 
-                    <div className="card">
+                    <div className="card shadow">
+
+                        <div className="card-header bg-primary text-white">
+
+                            {
+
+                                selectedFriend ?
+
+                                `Chat with ${selectedFriend.full_name}`
+
+                                :
+
+                                "Select a Friend"
+
+                            }
+
+                        </div>
 
                         <div
                             className="card-body"
@@ -110,18 +171,26 @@ function Chat() {
 
                             {
 
-                                messages.map((msg, index) => (
+                                messages.length === 0 ?
+
+                                <p>No Messages</p>
+
+                                :
+
+                                messages.map((msg) => (
 
                                     <div
-                                        key={index}
-                                        className="mb-2"
+                                        key={msg.id}
+                                        className={`mb-3 ${msg.sender_id === selectedFriend.id ? "text-start" : "text-end"}`}
                                     >
 
-                                        <b>User {msg.sender_id}</b>
+                                        <span
+                                            className={`badge ${msg.sender_id === selectedFriend.id ? "bg-secondary" : "bg-success"}`}
+                                        >
 
-                                        <br />
+                                            {msg.message}
 
-                                        {msg.message}
+                                        </span>
 
                                     </div>
 
@@ -131,26 +200,43 @@ function Chat() {
 
                         </div>
 
-                        <div className="card-footer d-flex">
+                        {
 
-                            <input
-                                className="form-control"
-                                value={message}
-                                onChange={(e) => setMessage(e.target.value)}
-                                placeholder="Type a message..."
-                            />
+                            selectedFriend &&
 
-                            <button
-                                className="btn btn-primary ms-2"
-                                onClick={sendMessage}
-                                disabled={!selectedFriend}
-                            >
+                            <div className="card-footer">
 
-                                Send
+                                <div className="input-group">
 
-                            </button>
+                                    <input
 
-                        </div>
+                                        className="form-control"
+
+                                        placeholder="Type a message..."
+
+                                        value={text}
+
+                                        onChange={(e) => setText(e.target.value)}
+
+                                    />
+
+                                    <button
+
+                                        className="btn btn-primary"
+
+                                        onClick={sendMessage}
+
+                                    >
+
+                                        Send
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        }
 
                     </div>
 
