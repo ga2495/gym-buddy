@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Navbar from "../components/Navbar";
+import Layout from "../components/Layout";
 import api from "../services/api";
 
 function Buddies() {
@@ -18,7 +18,9 @@ function Buddies() {
 
             setBuddies(res.data.buddies);
 
-        } catch {
+        } catch (err) {
+
+            console.log(err);
 
             alert("Unable to load buddies");
 
@@ -30,13 +32,15 @@ function Buddies() {
 
         try {
 
-            await api.post(`/friends/request/${id}`);
+            const res = await api.post(`/friends/request/${id}`);
 
-            alert("Friend Request Sent");
+            alert(res.data.message);
+
+            loadBuddies();
 
         } catch (err) {
 
-            alert(err.response?.data?.message || "Error");
+            alert(err.response?.data?.message || "Server Error");
 
         }
 
@@ -44,61 +48,97 @@ function Buddies() {
 
     return (
 
-        <>
+        <Layout>
 
-            <Navbar />
+            <h2 className="mb-4">
+                🔍 Find Gym Buddies
+            </h2>
 
-            <div className="container mt-4">
+            <div className="row">
 
-                <h2>Find Gym Buddies</h2>
+                {
 
-                <hr />
+                    buddies.length === 0 ?
 
-                <div className="row">
+                    (
 
-                    {
+                        <div className="col-12">
 
-                        buddies.map((user) => (
+                            <div className="alert alert-info">
 
-                            <div
-                                className="col-md-4 mb-4"
-                                key={user.id}
-                            >
+                                No buddies available.
 
-                                <div className="card shadow">
+                            </div>
 
-                                    <div className="card-body">
+                        </div>
 
-                                        <h4>{user.full_name}</h4>
+                    )
 
-                                        <p>{user.city}</p>
+                    :
 
-                                        <p>{user.gym_name}</p>
+                    buddies.map((user) => (
 
-                                        <p>{user.fitness_goal}</p>
+                        <div
+                            className="col-md-4 mb-4"
+                            key={user.id}
+                        >
 
-                                        <button
-                                            className="btn btn-primary"
-                                            onClick={() => sendRequest(user.id)}
-                                        >
-                                            Send Friend Request
-                                        </button>
+                            <div className="card shadow h-100">
 
-                                    </div>
+                                <div className="card-body">
+
+                                    <h4>{user.full_name}</h4>
+
+                                    <hr />
+
+                                    <p>
+                                        <strong>City:</strong> {user.city}
+                                    </p>
+
+                                    <p>
+                                        <strong>Gym:</strong> {user.gym_name}
+                                    </p>
+
+                                    <p>
+                                        <strong>Goal:</strong> {user.fitness_goal}
+                                    </p>
+
+                                    <p>
+                                        <strong>Experience:</strong> {user.experience}
+                                    </p>
+
+                                    <p>
+                                        <strong>Workout:</strong> {user.workout_time}
+                                    </p>
+
+                                    <p>
+                                        <strong>Match Score:</strong> {user.match_score}%
+                                    </p>
+
+                                </div>
+
+                                <div className="card-footer bg-white">
+
+                                    <button
+                                        className="btn btn-primary w-100"
+                                        onClick={() => sendRequest(user.id)}
+                                    >
+                                        Send Friend Request
+                                    </button>
 
                                 </div>
 
                             </div>
 
-                        ))
+                        </div>
 
-                    }
+                    ))
 
-                </div>
+                }
 
             </div>
 
-        </>
+        </Layout>
 
     );
 
