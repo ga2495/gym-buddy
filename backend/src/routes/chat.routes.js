@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 
+console.log("✅ CHAT ROUTES REGISTERED");
+
 const protect = require("../middleware/auth");
 
 const {
@@ -8,16 +10,14 @@ const {
     getMessages
 } = require("../controllers/chat.controller");
 
-// ==============================
-// SEND MESSAGE
-// POST /api/chat
-// ==============================
-router.post("/", protect, sendMessage);
+router.post("/", protect, (req, res, next) => {
+    console.log("POST /api/chat HIT");
+    next();
+}, sendMessage);
 
-// ==============================
-// GET CHAT WITH FRIEND
-// GET /api/chat/:id
-// ==============================
-router.get("/:id", protect, getMessages);
+router.get("/:id", protect, (req, res, next) => {
+    console.log("GET /api/chat/:id HIT");
+    next();
+}, getMessages);
 
 module.exports = router;
