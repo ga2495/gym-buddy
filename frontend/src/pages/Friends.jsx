@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Navbar from "../components/Navbar";
+import Layout from "../components/Layout";
 import api from "../services/api";
 
 function Friends() {
@@ -8,154 +8,181 @@ function Friends() {
     const [friends, setFriends] = useState([]);
 
     useEffect(() => {
-
         loadRequests();
         loadFriends();
-
     }, []);
 
-    // ===========================
-    // Pending Requests
-    // ===========================
-
     const loadRequests = async () => {
-
         try {
-
             const res = await api.get("/friends/requests");
-
             setRequests(res.data.requests);
-
         } catch (err) {
-
             console.log(err);
-
         }
-
     };
-
-    // ===========================
-    // Friends List
-    // ===========================
 
     const loadFriends = async () => {
-
         try {
-
             const res = await api.get("/friends");
-
             setFriends(res.data.friends);
-
         } catch (err) {
-
             console.log(err);
-
         }
-
     };
 
-    // ===========================
-    // Accept Request
-    // ===========================
-
     const acceptRequest = async (id) => {
-
         try {
 
-            await api.put(`/friends/accept/${id}`);
+            const res = await api.put(`/friends/accept/${id}`);
 
-            alert("Friend Request Accepted");
+            alert(res.data.message);
 
             loadRequests();
-
             loadFriends();
 
         } catch (err) {
 
-            alert("Unable to accept request");
+            alert(err.response?.data?.message || "Unable to accept request");
 
         }
+    };
 
+    const rejectRequest = async (id) => {
+        try {
+
+            const res = await api.put(`/friends/reject/${id}`);
+
+            alert(res.data.message);
+
+            loadRequests();
+
+        } catch (err) {
+
+            alert(err.response?.data?.message || "Unable to reject request");
+
+        }
     };
 
     return (
 
-        <>
+        <Layout>
 
-            <Navbar />
+            <h2 className="mb-4">
+                🤝 Friend Requests
+            </h2>
 
-            <div className="container mt-4">
+            {
+                requests.length === 0 ?
 
-                <h2>Friend Requests</h2>
+                (
+                    <div className="alert alert-info">
+                        No Pending Requests
+                    </div>
+                )
 
-                <hr />
+                :
 
-                {
-                    requests.length === 0 ?
+                requests.map((request) => (
 
-                        <p>No Pending Requests</p>
+                    <div
+                        className="card shadow mb-3"
+                        key={request.id}
+                    >
 
-                        :
+                        <div className="card-body">
 
-                        requests.map((request) => (
+                            <h4>{request.full_name}</h4>
 
-                            <div
-                                className="card mb-3"
-                                key={request.id}
-                            >
+                            <p>
+                                <strong>City:</strong> {request.city}
+                            </p>
 
-                                <div className="card-body">
+                            <p>
+                                <strong>Gym:</strong> {request.gym_name}
+                            </p>
 
-                                    <h5>{request.full_name}</h5>
+                            <p>
+                                <strong>Goal:</strong> {request.fitness_goal}
+                            </p>
 
-                                    <p>{request.city}</p>
+                            <div className="d-flex gap-2">
 
-                                    <p>{request.gym_name}</p>
+                                <button
+                                    className="btn btn-success"
+                                    onClick={() => acceptRequest(request.id)}
+                                >
+                                    Accept
+                                </button>
 
-                                    <button
-                                        className="btn btn-success"
-                                        onClick={() => acceptRequest(request.id)}
-                                    >
-                                        Accept
-                                    </button>
-
-                                </div>
+                                <button
+                                    className="btn btn-danger"
+                                    onClick={() => rejectRequest(request.id)}
+                                >
+                                    Reject
+                                </button>
 
                             </div>
 
-                        ))
+                        </div>
 
-                }
+                    </div>
 
-                <br />
+                ))
+            }
 
-                <h2>Your Friends</h2>
+            <hr className="my-5" />
 
-                <hr />
+            <h2 className="mb-4">
+                👥 My Friends
+            </h2>
 
-                {
-                    friends.length === 0 ?
+            {
+                friends.length === 0 ?
 
-                        <p>No Friends Yet</p>
+                (
+                    <div className="alert alert-warning">
+                        No Friends Yet
+                    </div>
+                )
 
-                        :
+                :
+
+                <div className="row">
+
+                    {
 
                         friends.map((friend) => (
 
                             <div
-                                className="card mb-3"
+                                className="col-md-4 mb-4"
                                 key={friend.id}
                             >
 
-                                <div className="card-body">
+                                <div className="card shadow h-100">
 
-                                    <h5>{friend.full_name}</h5>
+                                    <div className="card-body">
 
-                                    <p>{friend.city}</p>
+                                        <h4>{friend.full_name}</h4>
 
-                                    <p>{friend.gym_name}</p>
+                                        <hr />
 
-                                    <p>{friend.fitness_goal}</p>
+                                        <p>
+                                            <strong>City:</strong> {friend.city}
+                                        </p>
+
+                                        <p>
+                                            <strong>Gym:</strong> {friend.gym_name}
+                                        </p>
+
+                                        <p>
+                                            <strong>Goal:</strong> {friend.fitness_goal}
+                                        </p>
+
+                                        <p>
+                                            <strong>Experience:</strong> {friend.experience}
+                                        </p>
+
+                                    </div>
 
                                 </div>
 
@@ -163,11 +190,13 @@ function Friends() {
 
                         ))
 
-                }
+                    }
 
-            </div>
+                </div>
 
-        </>
+            }
+
+        </Layout>
 
     );
 
