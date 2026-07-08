@@ -8,10 +8,16 @@ const {
     getMessages
 } = require("../controllers/chat.controller");
 
-// Send Message
+// ==============================
+// SEND MESSAGE
+// POST /api/chat
+// ==============================
 router.post("/", protect, sendMessage);
 
-// Get Messages
+// ==============================
+// GET CHAT WITH FRIEND
+// GET /api/chat/:id
+// ==============================
 router.get("/:id", protect, getMessages);
 
 module.exports = router;
