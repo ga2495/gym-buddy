@@ -1,10 +1,12 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import api from "../services/api";
 
 function Navbar() {
 
     const navigate = useNavigate();
+    const location = useLocation();
+
     const [user, setUser] = useState(null);
 
     useEffect(() => {
@@ -12,81 +14,144 @@ function Navbar() {
     }, []);
 
     const loadProfile = async () => {
+
         try {
+
             const res = await api.get("/profile");
+
             setUser(res.data.user);
+
         } catch (err) {
+
             console.log(err);
+
         }
+
     };
 
     const logout = () => {
+
         localStorage.removeItem("token");
+
         navigate("/login");
+
     };
 
+    const isActive = (path) => location.pathname === path;
+
     return (
-        <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
 
-    <div className="container">
+        <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow">
 
-        <Link className="navbar-brand" to="/dashboard">
-            🏋️ Gym Buddy
-        </Link>
+            <div className="container">
 
-        <div className="navbar-nav">
+                <Link className="navbar-brand fw-bold" to="/dashboard">
 
-            <Link className="nav-link" to="/dashboard">
-                Dashboard
-            </Link>
+                    🏋️ Gym Buddy
 
-            <Link className="nav-link" to="/profile">
-                Profile
-            </Link>
+                </Link>
 
-            <Link className="nav-link" to="/buddies">
-                Buddies
-            </Link>
+                <button
+                    className="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbar"
+                >
+                    <span className="navbar-toggler-icon"></span>
+                </button>
 
-            <Link className="nav-link" to="/friends">
-                Friends
-            </Link>
+                <div
+                    className="collapse navbar-collapse"
+                    id="navbar"
+                >
 
-            <Link className="nav-link" to="/chat">
-                Chat
-            </Link>
+                    <ul className="navbar-nav me-auto">
 
-            <Link className="nav-link" to="/workout">
-                Workout
-            </Link>
+                        <li className="nav-item">
+                            <Link
+                                className={`nav-link ${isActive("/dashboard") ? "active" : ""}`}
+                                to="/dashboard"
+                            >
+                                Dashboard
+                            </Link>
+                        </li>
 
-        </div>
+                        <li className="nav-item">
+                            <Link
+                                className={`nav-link ${isActive("/profile") ? "active" : ""}`}
+                                to="/profile"
+                            >
+                                Profile
+                            </Link>
+                        </li>
 
-        <div className="ms-auto d-flex align-items-center">
+                        <li className="nav-item">
+                            <Link
+                                className={`nav-link ${isActive("/buddies") ? "active" : ""}`}
+                                to="/buddies"
+                            >
+                                Find Buddies
+                            </Link>
+                        </li>
 
-            {user && (
+                        <li className="nav-item">
+                            <Link
+                                className={`nav-link ${isActive("/friends") ? "active" : ""}`}
+                                to="/friends"
+                            >
+                                Friend Requests
+                            </Link>
+                        </li>
 
-                <span className="text-white me-3">
+                        <li className="nav-item">
+                            <Link
+                                className={`nav-link ${isActive("/chat") ? "active" : ""}`}
+                                to="/chat"
+                            >
+                                Chat
+                            </Link>
+                        </li>
 
-                    👋 {user.full_name}
+                        <li className="nav-item">
+                            <Link
+                                className={`nav-link ${isActive("/workout") ? "active" : ""}`}
+                                to="/workout"
+                            >
+                                Workout
+                            </Link>
+                        </li>
 
-                </span>
+                    </ul>
 
-            )}
+                    <div className="d-flex align-items-center">
 
-            <button
-                className="btn btn-danger"
-                onClick={logout}
-            >
-                Logout
-            </button>
+                        {user && (
 
-        </div>
+                            <span className="text-white me-3">
 
-    </div>
+                                👋 {user.full_name}
 
-</nav>
+                            </span>
+
+                        )}
+
+                        <button
+                            className="btn btn-danger"
+                            onClick={logout}
+                        >
+                            Logout
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </nav>
+
     );
+
 }
 
 export default Navbar;
