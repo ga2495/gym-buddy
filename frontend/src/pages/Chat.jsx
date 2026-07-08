@@ -66,16 +66,13 @@ function Chat() {
         try {
 
             await api.post("/chat", {
+    receiver_id: selectedFriend.id,
+    message: text
+});
 
-                receiver_id: selectedFriend.id,
+setText("");
 
-                message: text
-
-            });
-
-            setText("");
-
-            loadMessages(selectedFriend.id);
+await loadMessages(selectedFriend.id);
 
         } catch (err) {
 
@@ -177,24 +174,34 @@ function Chat() {
 
                                 :
 
-                                messages.map((msg) => (
+                               messages.map((msg) => (
 
-                                    <div
-                                        key={msg.id}
-                                        className={`mb-3 ${msg.sender_id === selectedFriend.id ? "text-start" : "text-end"}`}
-                                    >
+    <div
+        key={msg.id}
+        className={`mb-3 ${
+            msg.sender_id === selectedFriend.id
+                ? "text-start"
+                : "text-end"
+        }`}
+    >
 
-                                        <span
-                                            className={`badge ${msg.sender_id === selectedFriend.id ? "bg-secondary" : "bg-success"}`}
-                                        >
+        <span
+            className={`badge ${
+                msg.sender_id === selectedFriend.id
+                    ? "bg-secondary"
+                    : "bg-success"
+            }`}
+            style={{
+                fontSize: "16px",
+                padding: "10px 15px"
+            }}
+        >
+            {msg.message}
+        </span>
 
-                                            {msg.message}
+    </div>
 
-                                        </span>
-
-                                    </div>
-
-                                ))
+))
 
                             }
 
